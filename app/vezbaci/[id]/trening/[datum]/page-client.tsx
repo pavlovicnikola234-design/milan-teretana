@@ -91,7 +91,7 @@ export function TreningPageClient({
       />
 
       <Dialog open={dupOpen} onOpenChange={setDupOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Dupliraj trening</DialogTitle>
             <DialogDescription>
