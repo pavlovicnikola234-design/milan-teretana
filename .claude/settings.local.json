@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(npx --version)",
+      "WebSearch",
+      "Bash(npx create-next-app@latest . --ts --tailwind --eslint --app --no-src-dir --import-alias=\"@/*\" --use-npm)",
+      "Bash(npx create-next-app@latest milan-teretana --ts --tailwind --eslint --app --no-src-dir --import-alias=\"@/*\" --use-npm)",
+      "Bash(cp -r milan-teretana/. \"Milan Teretana/\")",
+      "Bash(rm -rf milan-teretana)",
+      "Bash(npx shadcn@latest init -d)"
+    ]
+  }
+}
