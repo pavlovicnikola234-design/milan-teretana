@@ -92,6 +92,41 @@ export async function updateNapomena(
   revalidatePath(treningPath(vezbacId, datum))
 }
 
+export async function toggleVezba(
+  vezbacId: string,
+  vezbaId: string,
+  datum: string,
+  zavrsena: boolean
+) {
+  const supabase = createSupabaseClient()
+
+  const { error } = await supabase
+    .from("vezbe")
+    .update({ zavrsena })
+    .eq("id", vezbaId)
+
+  if (error) throw new Error(error.message)
+  revalidatePath(treningPath(vezbacId, datum))
+}
+
+export async function toggleTrening(
+  vezbacId: string,
+  treningId: string,
+  datum: string,
+  zavrsen: boolean
+) {
+  const supabase = createSupabaseClient()
+
+  const { error } = await supabase
+    .from("treninzi")
+    .update({ zavrsen })
+    .eq("id", treningId)
+
+  if (error) throw new Error(error.message)
+  revalidatePath(`/vezbaci/${vezbacId}`)
+  revalidatePath(treningPath(vezbacId, datum))
+}
+
 export async function moveVezba(
   vezbacId: string,
   treningId: string,

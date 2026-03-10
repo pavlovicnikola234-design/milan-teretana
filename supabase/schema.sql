@@ -14,6 +14,7 @@ CREATE TABLE treninzi (
   vezbac_id UUID NOT NULL REFERENCES vezbaci(id) ON DELETE CASCADE,
   datum DATE NOT NULL,
   napomena TEXT,
+  zavrsen BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(vezbac_id, datum)
 );
@@ -28,6 +29,7 @@ CREATE TABLE vezbe (
   ponavljanja TEXT NOT NULL,
   kilaza TEXT,
   pauza TEXT,
+  zavrsena BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

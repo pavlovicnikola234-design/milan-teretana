@@ -1,8 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { notFound } from "next/navigation"
-import { format } from "date-fns"
-import { sr } from "date-fns/locale"
+import { formatDateSr } from "@/lib/date"
 import { createSupabaseClient } from "@/lib/supabase"
 import { Header } from "@/components/header"
 import { VezbaRow } from "@/components/vezba-row"
@@ -46,7 +45,7 @@ export default async function TreningPage({ params }: PageProps) {
   const t = trening as Trening
   const vezbeList = (vezbe as Vezba[]) || []
   const dateObj = new Date(datum + "T00:00:00")
-  const dateStr = format(dateObj, "EEEE, d. MMMM yyyy.", { locale: sr })
+  const dateStr = formatDateSr(dateObj, "EEEE, d. MMMM yyyy.")
 
   return (
     <>

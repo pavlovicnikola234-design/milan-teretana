@@ -12,6 +12,7 @@ export interface Trening {
   vezbac_id: string
   datum: string
   napomena: string | null
+  zavrsen: boolean
   created_at: string
 }
 
@@ -24,5 +25,6 @@ export interface Vezba {
   ponavljanja: string
   kilaza: string | null
   pauza: string | null
+  zavrsena: boolean
   created_at: string
 }

@@ -2,12 +2,13 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { format } from "date-fns"
-import { sr } from "date-fns/locale"
+import { formatDateSr } from "@/lib/date"
 import { CalendarDays, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
 import { deleteTrening } from "@/app/vezbaci/[id]/actions"
+import { toggleTrening } from "@/app/vezbaci/[id]/trening/[datum]/actions"
 import type { Trening } from "@/lib/types"
 
 interface TreningListProps {
@@ -29,6 +30,14 @@ export function TreningList({ vezbacId, treninzi }: TreningListProps) {
     setDeleteId(null)
   }
 
+  async function handleToggle(trening: Trening, checked: boolean) {
+    try {
+      await toggleTrening(vezbacId, trening.id, trening.datum, checked)
+    } catch {
+      alert("Greska pri azuriranju treninga.")
+    }
+  }
+
   if (treninzi.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -46,18 +55,28 @@ export function TreningList({ vezbacId, treninzi }: TreningListProps) {
           return (
             <div
               key={t.id}
-              className="flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-accent/50 active:bg-accent"
-              onClick={() => router.push(`/vezbaci/${vezbacId}/trening/${t.datum}`)}
+              className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-accent/50 active:bg-accent ${t.zavrsen ? "opacity-60" : ""}`}
             >
-              <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
-              <span className="flex-1 font-medium text-base">
-                {format(dateObj, "EEEE, d. MMMM yyyy.", { locale: sr })}
-              </span>
-              {t.napomena && (
-                <span className="text-xs text-muted-foreground truncate max-w-24">
-                  {t.napomena}
+              <Checkbox
+                checked={t.zavrsen}
+                onCheckedChange={(checked) => handleToggle(t, checked === true)}
+                className="h-5 w-5 shrink-0"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div
+                className="flex items-center gap-2 flex-1 min-w-0"
+                onClick={() => router.push(`/vezbaci/${vezbacId}/trening/${t.datum}`)}
+              >
+                <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className={`flex-1 font-medium text-base ${t.zavrsen ? "line-through text-muted-foreground" : ""}`}>
+                  {formatDateSr(dateObj, "EEEE, d. MMMM yyyy.")}
                 </span>
-              )}
+                {t.napomena && (
+                  <span className="text-xs text-muted-foreground truncate max-w-24">
+                    {t.napomena}
+                  </span>
+                )}
+              </div>
               <Button
                 variant="ghost"
                 size="icon"

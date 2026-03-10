@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { sr } from "date-fns/locale"
+import { formatDateSr } from "@/lib/date"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -46,7 +47,7 @@ export function NoviTreningForm({ vezbacId }: NoviTreningFormProps) {
           render={<Button variant="outline" className="flex-1 justify-start gap-2 text-base h-11" />}
         >
           <CalendarIcon className="h-4 w-4" />
-          {date ? format(date, "d. MMMM yyyy.", { locale: sr }) : "Izaberi datum"}
+          {date ? formatDateSr(date, "d. MMMM yyyy.") : "Izaberi datum"}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
