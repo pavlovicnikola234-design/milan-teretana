@@ -15,7 +15,7 @@ export function Header({ title, backHref, showThemeToggle }: HeaderProps) {
   const router = useRouter()
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-[env(safe-area-inset-top)]">
       <div className="flex h-14 items-center gap-3 px-4">
         {backHref ? (
           <Button

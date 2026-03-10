@@ -16,6 +16,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+  ],
 }
 
 export default function RootLayout({
@@ -24,11 +29,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="sr" suppressHydrationWarning>
+    <html lang="sr" className="dark" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(localStorage.getItem("theme")==="dark"){document.documentElement.classList.add("dark")}}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="light"){document.documentElement.classList.remove("dark")}else{document.documentElement.classList.add("dark")}}catch(e){document.documentElement.classList.add("dark")}})()`,
           }}
         />
       </head>
