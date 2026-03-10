@@ -15,7 +15,7 @@ export default async function VezbaciPage() {
 
   return (
     <>
-      <Header title="Moji Vezbaci" />
+      <Header title="Plan Treninga" showThemeToggle />
       <main className="p-4 max-w-2xl mx-auto">
         <VezbaciPageClient>
           {vezbaci && vezbaci.length > 0 ? (

@@ -3,13 +3,15 @@
 import { ArrowLeft, Dumbbell } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface HeaderProps {
   title: string
   backHref?: string
+  showThemeToggle?: boolean
 }
 
-export function Header({ title, backHref }: HeaderProps) {
+export function Header({ title, backHref, showThemeToggle }: HeaderProps) {
   const router = useRouter()
 
   return (
@@ -27,7 +29,8 @@ export function Header({ title, backHref }: HeaderProps) {
         ) : (
           <Dumbbell className="h-5 w-5 text-primary" />
         )}
-        <h1 className="text-lg font-semibold truncate">{title}</h1>
+        <h1 className="text-lg font-semibold truncate flex-1">{title}</h1>
+        {showThemeToggle && <ThemeToggle />}
       </div>
     </header>
   )
