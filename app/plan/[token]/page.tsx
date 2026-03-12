@@ -3,24 +3,25 @@ export const dynamic = "force-dynamic"
 import { notFound } from "next/navigation"
 import { createSupabaseClient } from "@/lib/supabase"
 import { Header } from "@/components/header"
-import { TreningList } from "@/components/trening-list"
-import { NoviTreningForm } from "@/components/novi-trening-form"
-import { ShareButton } from "@/components/share-button"
+import { ReadOnlyTreningList } from "@/components/read-only-trening-list"
 import { Separator } from "@/components/ui/separator"
 import type { Vezbac, Trening } from "@/lib/types"
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ token: string }>
 }
 
-export default async function VezbacDetailPage({ params }: PageProps) {
-  const { id } = await params
+export default async function PublicPlanPage({ params }: PageProps) {
+  const { token } = await params
   const supabase = createSupabaseClient()
+
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!uuidRegex.test(token)) notFound()
 
   const { data: vezbac } = await supabase
     .from("vezbaci")
     .select("*")
-    .eq("id", id)
+    .eq("share_token", token)
     .single()
 
   if (!vezbac) notFound()
@@ -28,37 +29,18 @@ export default async function VezbacDetailPage({ params }: PageProps) {
   const { data: treninzi } = await supabase
     .from("treninzi")
     .select("*")
-    .eq("vezbac_id", id)
+    .eq("vezbac_id", vezbac.id)
     .order("datum", { ascending: false })
 
   const v = vezbac as Vezbac
 
   return (
     <>
-      <Header
-        title={`${v.ime} ${v.prezime}`}
-        backHref="/vezbaci"
-      />
+      <Header title={`Plan - ${v.ime} ${v.prezime}`} />
       <main className="p-4 max-w-2xl mx-auto space-y-6">
         {v.napomena && (
           <p className="text-sm text-muted-foreground">{v.napomena}</p>
         )}
-
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-            Podeli plan
-          </h2>
-          <ShareButton vezbacId={id} existingToken={v.share_token} />
-        </div>
-
-        <Separator />
-
-        <div className="space-y-3">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-            Novi trening
-          </h2>
-          <NoviTreningForm vezbacId={id} />
-        </div>
 
         <Separator />
 
@@ -66,8 +48,8 @@ export default async function VezbacDetailPage({ params }: PageProps) {
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
             Treninzi
           </h2>
-          <TreningList
-            vezbacId={id}
+          <ReadOnlyTreningList
+            token={token}
             treninzi={(treninzi as Trening[]) || []}
           />
         </div>

@@ -4,6 +4,7 @@ export interface Vezbac {
   prezime: string
   telefon: string | null
   napomena: string | null
+  share_token: string | null
   created_at: string
 }
 

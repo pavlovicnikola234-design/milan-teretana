@@ -5,6 +5,7 @@ CREATE TABLE vezbaci (
   prezime TEXT NOT NULL,
   telefon TEXT,
   napomena TEXT,
+  share_token UUID DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -34,6 +35,7 @@ CREATE TABLE vezbe (
 );
 
 -- Indeksi za ceste upite
+CREATE UNIQUE INDEX idx_vezbaci_share_token ON vezbaci(share_token) WHERE share_token IS NOT NULL;
 CREATE INDEX idx_treninzi_vezbac ON treninzi(vezbac_id);
 CREATE INDEX idx_treninzi_datum ON treninzi(datum);
 CREATE INDEX idx_vezbe_trening ON vezbe(trening_id);

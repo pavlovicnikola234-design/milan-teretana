@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server"
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow login page, static files, and Next.js internals
+  // Allow login page, public plan pages, static files, and Next.js internals
   if (
     pathname.startsWith("/login") ||
+    pathname.startsWith("/plan") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon")
   ) {
