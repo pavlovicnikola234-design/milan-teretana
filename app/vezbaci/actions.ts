@@ -11,6 +11,9 @@ export async function addVezbac(formData: FormData) {
     prezime: formData.get("prezime") as string,
     telefon: (formData.get("telefon") as string) || null,
     napomena: (formData.get("napomena") as string) || null,
+    pol: (formData.get("pol") as string) || null,
+    kilaza: (formData.get("kilaza") as string) || null,
+    visina: (formData.get("visina") as string) || null,
   })
 
   if (error) throw new Error(error.message)
@@ -27,6 +30,9 @@ export async function updateVezbac(id: string, formData: FormData) {
       prezime: formData.get("prezime") as string,
       telefon: (formData.get("telefon") as string) || null,
       napomena: (formData.get("napomena") as string) || null,
+      pol: (formData.get("pol") as string) || null,
+      kilaza: (formData.get("kilaza") as string) || null,
+      visina: (formData.get("visina") as string) || null,
     })
     .eq("id", id)
 

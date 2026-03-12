@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ExerciseSearch } from "@/components/exercise-search"
 import { addVezba, updateVezba } from "@/app/vezbaci/[id]/trening/[datum]/actions"
-import type { Vezba } from "@/lib/types"
+import { saveToLibrary } from "@/app/vezbaci/[id]/trening/[datum]/library-actions"
+import type { Vezba, BibliotekaVezba } from "@/lib/types"
 
 interface VezbaFormProps {
   open: boolean
@@ -33,6 +35,26 @@ export function VezbaForm({
   const [loading, setLoading] = useState(false)
   const isEdit = !!vezba
 
+  const serijeRef = useRef<HTMLInputElement>(null)
+  const ponavljanjaRef = useRef<HTMLInputElement>(null)
+  const kilazaRef = useRef<HTMLInputElement>(null)
+  const pauzaRef = useRef<HTMLInputElement>(null)
+
+  function handleExerciseSelect(exercise: BibliotekaVezba) {
+    if (exercise.default_serije && serijeRef.current) {
+      serijeRef.current.value = String(exercise.default_serije)
+    }
+    if (exercise.default_ponavljanja && ponavljanjaRef.current) {
+      ponavljanjaRef.current.value = exercise.default_ponavljanja
+    }
+    if (exercise.default_kilaza && kilazaRef.current) {
+      kilazaRef.current.value = exercise.default_kilaza
+    }
+    if (exercise.default_pauza && pauzaRef.current) {
+      pauzaRef.current.value = exercise.default_pauza
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
@@ -44,6 +66,17 @@ export function VezbaForm({
       } else {
         await addVezba(vezbacId, treningId, datum, formData)
       }
+
+      // Save to library in background
+      const naziv = formData.get("naziv") as string
+      const serije = parseInt(formData.get("serije") as string)
+      const ponavljanja = formData.get("ponavljanja") as string
+      const kilaza = formData.get("kilaza") as string
+      const pauza = formData.get("pauza") as string
+      if (naziv) {
+        saveToLibrary(naziv, serije, ponavljanja, kilaza, pauza).catch(() => {})
+      }
+
       onOpenChange(false)
     } catch {
       alert("Greska pri cuvanju vezbe.")
@@ -61,19 +94,20 @@ export function VezbaForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="naziv">Naziv vezbe *</Label>
-            <Input
+            <ExerciseSearch
               id="naziv"
               name="naziv"
               required
-              defaultValue={vezba?.naziv}
+              defaultValue={vezba?.naziv ?? ""}
+              onSelect={handleExerciseSelect}
               placeholder="npr. Bench press"
-              className="text-base"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="serije">Serije *</Label>
               <Input
+                ref={serijeRef}
                 id="serije"
                 name="serije"
                 type="number"
@@ -86,6 +120,7 @@ export function VezbaForm({
             <div className="space-y-2">
               <Label htmlFor="ponavljanja">Ponavljanja *</Label>
               <Input
+                ref={ponavljanjaRef}
                 id="ponavljanja"
                 name="ponavljanja"
                 required
@@ -99,6 +134,7 @@ export function VezbaForm({
             <div className="space-y-2">
               <Label htmlFor="kilaza">Kilaza (kg)</Label>
               <Input
+                ref={kilazaRef}
                 id="kilaza"
                 name="kilaza"
                 defaultValue={vezba?.kilaza ?? ""}
@@ -109,6 +145,7 @@ export function VezbaForm({
             <div className="space-y-2">
               <Label htmlFor="pauza">Pauza</Label>
               <Input
+                ref={pauzaRef}
                 id="pauza"
                 name="pauza"
                 defaultValue={vezba?.pauza ?? ""}

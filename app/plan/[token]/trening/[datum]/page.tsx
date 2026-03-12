@@ -4,8 +4,11 @@ import { notFound } from "next/navigation"
 import { createSupabaseClient } from "@/lib/supabase"
 import { formatDateSr } from "@/lib/date"
 import { Header } from "@/components/header"
-import { ReadOnlyVezbaRow } from "@/components/read-only-vezba-row"
-import { Separator } from "@/components/ui/separator"
+import { PublicVezbaRow } from "@/components/public-vezba-row"
+import { PublicKomentarField } from "@/components/public-komentar-field"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { CalendarDays, Dumbbell, MessageSquare, MessageCircle } from "lucide-react"
 import type { Vezbac, Trening, Vezba } from "@/lib/types"
 
 interface PageProps {
@@ -46,7 +49,8 @@ export default async function PublicTreningPage({ params }: PageProps) {
   const t = trening as Trening
   const vezbeList = (vezbe as Vezba[]) || []
   const dateObj = new Date(datum + "T00:00:00")
-  const dateStr = formatDateSr(dateObj, "EEEE, d. MMMM yyyy.")
+  const dayName = formatDateSr(dateObj, "EEEE")
+  const fullDate = formatDateSr(dateObj, "d. MMMM yyyy.")
 
   return (
     <>
@@ -54,38 +58,84 @@ export default async function PublicTreningPage({ params }: PageProps) {
         title={`${v.ime} ${v.prezime}`}
         backHref={`/plan/${token}`}
       />
-      <main className="p-4 max-w-2xl mx-auto space-y-6">
-        <div>
-          <p className="text-sm text-muted-foreground capitalize">{dateStr}</p>
+      <main className="px-4 pt-2 pb-4 max-w-2xl mx-auto space-y-4">
+        {/* Date Hero Card */}
+        <Card size="sm">
+          <CardContent className="flex items-center gap-3 p-3">
+            <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
+              <CalendarDays className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold text-base capitalize">{dayName}</p>
+              <p className="text-xs text-muted-foreground">{fullDate}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Exercises */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5 py-1">
+            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-violet-500/10">
+              <Dumbbell className="h-4 w-4 text-violet-400" />
+            </div>
+            <span className="font-medium text-sm">Vezbe</span>
+            <Badge variant="secondary" className="text-xs font-normal">
+              {vezbeList.length}
+            </Badge>
+          </div>
+
+          {vezbeList.length > 0 ? (
+            <div className="space-y-2.5">
+              {vezbeList.map((vezba, idx) => (
+                <PublicVezbaRow
+                  key={vezba.id}
+                  vezba={vezba}
+                  token={token}
+                  datum={datum}
+                  index={idx}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 text-muted-foreground">
+              <Dumbbell className="h-10 w-10 mx-auto mb-3 opacity-30" />
+              <p className="text-base font-medium">Nema vezbi</p>
+            </div>
+          )}
         </div>
 
-        {vezbeList.length > 0 ? (
-          <div className="space-y-3">
-            {vezbeList.map((vezba, idx) => (
-              <ReadOnlyVezbaRow
-                key={vezba.id}
-                vezba={vezba}
-                index={idx}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>Nema vezbi</p>
-          </div>
+        {/* Napomena trenera */}
+        {t.napomena && (
+          <Card size="sm">
+            <CardContent className="p-3 space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-500/10">
+                  <MessageSquare className="h-4 w-4 text-amber-400" />
+                </div>
+                <span className="font-medium text-sm">Napomena trenera</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{t.napomena}</p>
+            </CardContent>
+          </Card>
         )}
 
-        {t.napomena && (
-          <>
-            <Separator />
-            <div className="space-y-3">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Napomena
-              </h2>
-              <p className="text-sm text-muted-foreground">{t.napomena}</p>
+        {/* Komentar vezbaca */}
+        <Card size="sm">
+          <CardContent className="p-3 space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-emerald-500/10">
+                <MessageCircle className="h-4 w-4 text-emerald-400" />
+              </div>
+              <span className="font-medium text-sm">Vas komentar</span>
             </div>
-          </>
-        )}
+            <PublicKomentarField
+              token={token}
+              treningId={t.id}
+              datum={datum}
+              initialValue={t.komentar_vezbaca || ""}
+            />
+          </CardContent>
+        </Card>
       </main>
     </>
   )

@@ -3,8 +3,9 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { formatDateSr } from "@/lib/date"
-import { CalendarDays, Trash2 } from "lucide-react"
+import { CalendarDays, Trash2, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
 import { deleteTrening } from "@/app/vezbaci/[id]/actions"
@@ -40,8 +41,9 @@ export function TreningList({ vezbacId, treninzi }: TreningListProps) {
 
   if (treninzi.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Nema treninga</p>
+      <div className="text-center py-16 text-muted-foreground">
+        <CalendarDays className="h-10 w-10 mx-auto mb-3 opacity-30" />
+        <p className="text-base font-medium">Nema treninga</p>
         <p className="text-sm mt-1">Izaberite datum i kreirajte novi trening</p>
       </div>
     )
@@ -49,46 +51,57 @@ export function TreningList({ vezbacId, treninzi }: TreningListProps) {
 
   return (
     <>
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {treninzi.map((t) => {
           const dateObj = new Date(t.datum + "T00:00:00")
+          const dayName = formatDateSr(dateObj, "EEEE")
+          const fullDate = formatDateSr(dateObj, "d. MMMM yyyy.")
           return (
-            <div
+            <Card
               key={t.id}
-              className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-accent/50 active:bg-accent ${t.zavrsen ? "opacity-60" : ""}`}
+              size="sm"
+              className={`cursor-pointer transition-all duration-150 hover:bg-accent/50 active:bg-accent active:scale-[0.99] ${t.zavrsen ? "opacity-60" : ""}`}
             >
-              <Checkbox
-                checked={t.zavrsen}
-                onCheckedChange={(checked) => handleToggle(t, checked === true)}
-                className="h-5 w-5 shrink-0"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <div
-                className="flex items-center gap-2 flex-1 min-w-0"
-                onClick={() => router.push(`/vezbaci/${vezbacId}/trening/${t.datum}`)}
-              >
-                <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className={`flex-1 font-medium text-base ${t.zavrsen ? "line-through text-muted-foreground" : ""}`}>
-                  {formatDateSr(dateObj, "EEEE, d. MMMM yyyy.")}
-                </span>
-                {t.napomena && (
-                  <span className="text-xs text-muted-foreground truncate max-w-24">
-                    {t.napomena}
-                  </span>
-                )}
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setDeleteId(t.id)
-                }}
-              >
-                <Trash2 className="h-4 w-4 text-muted-foreground" />
-              </Button>
-            </div>
+              <CardContent className="flex items-center gap-3 p-3">
+                <Checkbox
+                  checked={t.zavrsen}
+                  onCheckedChange={(checked) => handleToggle(t, checked === true)}
+                  className="h-5 w-5 shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div
+                  className="flex-1 min-w-0"
+                  onClick={() => router.push(`/vezbaci/${vezbacId}/trening/${t.datum}`)}
+                >
+                  <p className={`font-semibold text-[0.94rem] leading-tight capitalize ${t.zavrsen ? "line-through text-muted-foreground" : ""}`}>
+                    {dayName}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{fullDate}</p>
+                  {t.napomena && (
+                    <p className="text-xs text-muted-foreground/70 italic mt-1 truncate">
+                      {t.napomena}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setDeleteId(t.id)
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                  <ChevronRight
+                    className="h-4 w-4 text-muted-foreground/50 cursor-pointer"
+                    onClick={() => router.push(`/vezbaci/${vezbacId}/trening/${t.datum}`)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
           )
         })}
       </div>

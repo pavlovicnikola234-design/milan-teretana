@@ -83,6 +83,41 @@ export function VezbacForm({ open, onOpenChange, vezbac }: VezbacFormProps) {
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="pol">Pol</Label>
+            <select
+              id="pol"
+              name="pol"
+              defaultValue={vezbac?.pol ?? ""}
+              className="w-full rounded-md border bg-background px-3 py-2 text-base"
+            >
+              <option value="">-</option>
+              <option value="Muski">Muski</option>
+              <option value="Zenski">Zenski</option>
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="kilaza">Kilaza (kg)</Label>
+              <Input
+                id="kilaza"
+                name="kilaza"
+                defaultValue={vezbac?.kilaza ?? ""}
+                placeholder="npr. 85"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="visina">Visina (cm)</Label>
+              <Input
+                id="visina"
+                name="visina"
+                defaultValue={vezbac?.visina ?? ""}
+                placeholder="npr. 180"
+                className="text-base"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="napomena">Napomena</Label>
             <Textarea
               id="napomena"

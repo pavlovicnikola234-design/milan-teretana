@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Lock } from "lucide-react"
+import { Dumbbell } from "lucide-react"
 import { verifyPin } from "./actions"
 
 export default function LoginPage() {
@@ -26,7 +26,6 @@ export default function LoginPage() {
       inputRefs.current[index + 1]?.focus()
     }
 
-    // Auto-submit when all 4 digits entered
     if (value && index === 3) {
       const pin = newDigits.join("")
       if (pin.length === 4) {
@@ -65,37 +64,48 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-xs text-center space-y-8">
-        <div className="space-y-2">
-          <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-            <Lock className="h-8 w-8 text-muted-foreground" />
+        {/* App Branding */}
+        <div className="space-y-3">
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <Dumbbell className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-semibold">Unesite PIN</h1>
+          <div>
+            <h1 className="text-2xl font-bold">Plan Treninga</h1>
+            <p className="text-sm text-muted-foreground mt-1">Dobrodosli</p>
+          </div>
         </div>
 
-        <div className="flex justify-center gap-3" onPaste={handlePaste}>
-          {digits.map((digit, i) => (
-            <input
-              key={i}
-              ref={(el) => { inputRefs.current[i] = el }}
-              type="tel"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleChange(i, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(i, e)}
-              disabled={loading}
-              className="w-14 h-16 text-center text-2xl font-bold rounded-lg border-2 border-input bg-background focus:border-primary focus:outline-none transition-colors disabled:opacity-50"
-            />
-          ))}
+        {/* PIN Card */}
+        <div className="bg-card ring-1 ring-foreground/10 rounded-2xl p-6 space-y-5">
+          <p className="text-sm font-medium text-muted-foreground">Unesite PIN</p>
+
+          <div className="flex justify-center gap-3" onPaste={handlePaste}>
+            {digits.map((digit, i) => (
+              <input
+                key={i}
+                ref={(el) => { inputRefs.current[i] = el }}
+                type="tel"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleChange(i, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(i, e)}
+                disabled={loading}
+                className="w-14 h-16 text-center text-2xl font-bold rounded-xl border-2 border-muted bg-muted/30 focus:border-primary focus:bg-background focus:outline-none transition-colors disabled:opacity-50"
+              />
+            ))}
+          </div>
+
+          {error && (
+            <div className="inline-flex items-center rounded-lg bg-destructive/10 px-3 py-1.5 text-sm font-medium text-destructive">
+              {error}
+            </div>
+          )}
+
+          {loading && (
+            <p className="text-muted-foreground text-sm">Proveravam...</p>
+          )}
         </div>
-
-        {error && (
-          <p className="text-destructive text-sm font-medium">{error}</p>
-        )}
-
-        {loading && (
-          <p className="text-muted-foreground text-sm">Proveravam...</p>
-        )}
       </div>
     </div>
   )

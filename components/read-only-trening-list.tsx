@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation"
 import { formatDateSr } from "@/lib/date"
-import { CalendarDays } from "lucide-react"
+import { CalendarDays, ChevronRight } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import type { Trening } from "@/lib/types"
 
 interface ReadOnlyTreningListProps {
@@ -15,32 +16,41 @@ export function ReadOnlyTreningList({ token, treninzi }: ReadOnlyTreningListProp
 
   if (treninzi.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Nema treninga</p>
+      <div className="text-center py-16 text-muted-foreground">
+        <CalendarDays className="h-10 w-10 mx-auto mb-3 opacity-30" />
+        <p className="text-base font-medium">Nema treninga</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       {treninzi.map((t) => {
         const dateObj = new Date(t.datum + "T00:00:00")
+        const dayName = formatDateSr(dateObj, "EEEE")
+        const fullDate = formatDateSr(dateObj, "d. MMMM yyyy.")
         return (
-          <div
+          <Card
             key={t.id}
-            className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-accent/50 active:bg-accent ${t.zavrsen ? "opacity-60" : ""}`}
+            size="sm"
+            className={`cursor-pointer transition-all duration-150 hover:bg-accent/50 active:bg-accent active:scale-[0.99] ${t.zavrsen ? "opacity-60" : ""}`}
             onClick={() => router.push(`/plan/${token}/trening/${t.datum}`)}
           >
-            <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
-            <span className={`flex-1 font-medium text-base ${t.zavrsen ? "line-through text-muted-foreground" : ""}`}>
-              {formatDateSr(dateObj, "EEEE, d. MMMM yyyy.")}
-            </span>
-            {t.napomena && (
-              <span className="text-xs text-muted-foreground truncate max-w-24">
-                {t.napomena}
-              </span>
-            )}
-          </div>
+            <CardContent className="flex items-center gap-3 p-3">
+              <div className="flex-1 min-w-0">
+                <p className={`font-semibold text-[0.94rem] leading-tight capitalize ${t.zavrsen ? "line-through text-muted-foreground" : ""}`}>
+                  {dayName}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">{fullDate}</p>
+                {t.napomena && (
+                  <p className="text-xs text-muted-foreground/70 italic mt-1 truncate">
+                    {t.napomena}
+                  </p>
+                )}
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+            </CardContent>
+          </Card>
         )
       })}
     </div>
